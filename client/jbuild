@@ -1,0 +1,13 @@
+(executable
+ ((name       app)
+  (libraries (async_js
+              base
+              core_kernel
+              incr_dom
+
+              bcc32_com_lib))
+  (preprocess (pps (ppx_jane)))))
+
+(install
+ ((section share)
+  (files ((app.bc.js as js/app.js)))))
