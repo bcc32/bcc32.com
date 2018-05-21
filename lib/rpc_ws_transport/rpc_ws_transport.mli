@@ -1,7 +1,7 @@
 open! Core
 open! Async
 
-val serve
+val handle_connection
   :  handshake_timeout:Time.Span.t option
   -> heartbeat_config:Rpc.Connection.Heartbeat_config.t option
   -> implementations:'s Rpc.Implementations.t

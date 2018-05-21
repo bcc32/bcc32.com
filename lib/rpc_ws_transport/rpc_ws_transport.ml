@@ -83,7 +83,7 @@ let make_transport tcp_reader tcp_writer =
   |> Deferred.return
 ;;
 
-let serve
+let handle_connection
       ~handshake_timeout
       ~heartbeat_config
       ~implementations

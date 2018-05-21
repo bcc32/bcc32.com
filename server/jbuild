@@ -2,9 +2,7 @@
  ((name        main)
   (public_name bcc32-com-server)
   (libraries   (async
-                async_ssl
-                cohttp
-                cohttp-async
                 core
-                websocket-async))
+
+                rpc_ws_transport))
   (preprocess  (pps (ppx_jane)))))

@@ -1,0 +1,7 @@
+(library
+ ((name        rpc_ws_transport)
+  (libraries  (async
+               core
+               websocket-async))
+  (synopsis "Rpc over WebSockets transport")
+  (preprocess (pps (ppx_jane)))))

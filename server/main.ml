@@ -11,7 +11,7 @@ let implementations =
 
 let handle_tcp_connection addr reader writer =
   Log.Global.debug !"connection from %{sexp: Socket.Address.Inet.t}" addr;
-  Websocket_rpc_server.serve reader writer
+  Rpc_ws_transport.handle_connection reader writer
     ~handshake_timeout:None
     ~heartbeat_config:None
     ~implementations
