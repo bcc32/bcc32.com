@@ -1,4 +1,4 @@
 (library
- ((name        bcc32_com_lib)
+ ((name        protocol)
   (libraries  (async_rpc_kernel))
   (synopsis "Defines RPC protocols between server and client.")))

@@ -5,7 +5,7 @@
               core_kernel
               incr_dom
 
-              bcc32_com_lib))
+              protocol))
   (preprocess (pps (ppx_jane)))))
 
 (install

@@ -11,16 +11,6 @@ let create ~uri =
   { connection }
 ;;
 
-let query_set t value =
-  Rpc.One_way.dispatch_exn
-    Bcc32_com_lib.Protocol.set
-    t.connection
-    value
-;;
+let query_set t value = Rpc.One_way.dispatch_exn Protocol.set t.connection value
 
-let subscribe t =
-  Rpc.Pipe_rpc.dispatch_exn
-    Bcc32_com_lib.Protocol.subscribe
-    t.connection
-    ()
-;;
+let subscribe t = Rpc.Pipe_rpc.dispatch_exn Protocol.subscribe t.connection ()
