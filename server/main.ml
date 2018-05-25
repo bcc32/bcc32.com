@@ -18,6 +18,7 @@ let handle_tcp_connection addr reader writer =
     ~description:(Info.of_string "simple state server")
     ~connection_state:(fun _ -> state)
     ~on_handshake_error:`Ignore
+  |> Deferred.Or_error.ok_exn
 ;;
 
 let serve port =
@@ -41,8 +42,5 @@ let main =
     fun () -> serve port
   end
 ;;
-
-(* TODO remove *)
-let () = Log.Global.set_level `Debug
 
 let () = Command.run main
