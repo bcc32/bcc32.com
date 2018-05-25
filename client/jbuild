@@ -6,7 +6,7 @@
               incr_dom
 
               protocol))
-  (preprocess (pps (ppx_jane)))))
+  (preprocess (pps (ppx_jane js_of_ocaml-ppx)))))
 
 (install
  ((section share)

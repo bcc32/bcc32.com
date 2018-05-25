@@ -4,5 +4,6 @@
   (libraries   (async
                 core
 
+                protocol
                 rpc_ws_transport))
   (preprocess  (pps (ppx_jane)))))

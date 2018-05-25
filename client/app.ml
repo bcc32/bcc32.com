@@ -15,7 +15,7 @@ module Action = struct
     | Value_changed of string
   [@@deriving sexp_of]
 
-  let should_log _ = false
+  let should_log _ = true
 end
 
 module App
@@ -27,9 +27,9 @@ module App
   module Action = Action
   module State  = State
 
-  let apply_action (action : Action.t) _model _state =
+  let apply_action (action : Action.t) _model state =
     match action with
-    | User_input s -> s (* TODO send a thing to the server *)
+    | User_input s -> State.query_set state s; s
     | Value_changed s -> s
   ;;
 
@@ -64,6 +64,7 @@ end
 
 let () =
   Incr_dom.Start_app.simple (module App)
+    ~debug:true
     ~initial_model:Model.initial
     ~bind_to_element_with_id:"app"
 ;;
