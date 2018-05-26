@@ -41,14 +41,22 @@ module App
     Virtual_dom.Vdom.(
       Node.input
         [ Attr.on_input (fun _ input -> inject (Action.User_input input))
+        ; Attr.autofocus true
         ; Attr.string_property "value" model ]
         [])
   ;;
 
   let on_startup ~schedule _model =
     let%bind state =
+      let host =
+        Dom_html.window##.location##.hostname
+        |> Js.to_string
+      in
       State.create
-        ~uri:(Uri.of_string "ws://localhost:8080/")
+        ~uri:(Uri.make ()
+                ~scheme:"ws"
+                ~host
+                ~port:8080)
     in
     let%map (r, _) = State.subscribe state in
     don't_wait_for (
