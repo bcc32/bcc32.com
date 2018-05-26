@@ -48,15 +48,8 @@ module App
 
   let on_startup ~schedule _model =
     let%bind state =
-      let host =
-        Dom_html.window##.location##.hostname
-        |> Js.to_string
-      in
       State.create
-        ~uri:(Uri.make ()
-                ~scheme:"ws"
-                ~host
-                ~port:8080)
+        ~uri:(Uri.make () ~scheme:"wss" ~host:"ws.bcc32.com")
     in
     let%map (r, _) = State.subscribe state in
     don't_wait_for (

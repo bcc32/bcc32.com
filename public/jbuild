@@ -1,0 +1,7 @@
+(install
+  ((section share)
+   (files (basic.txt
+           de.png
+           favicon.ico
+           robots.txt
+           (keybase.txt as .well-known/keybase.txt)))))
