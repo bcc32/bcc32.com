@@ -1,6 +1,18 @@
 open! Core_kernel
 open! Async_kernel
 
+let is_localhost =
+  Dom_html.window##.location##.hostname
+  |> Js.to_string
+  |> List.mem [ "localhost"; "127.0.0.1" ] ~equal:String.equal
+;;
+
+let ws_uri =
+  if is_localhost
+  then (Uri.of_string "ws://localhost:8080/")
+  else (Uri.of_string "wss://ws.bcc32.com/")
+;;
+
 module Model = struct
   type t = string
 
@@ -47,10 +59,7 @@ module App
   ;;
 
   let on_startup ~schedule _model =
-    let%bind state =
-      State.create
-        ~uri:(Uri.make () ~scheme:"wss" ~host:"ws.bcc32.com")
-    in
+    let%bind state = State.create ~uri:ws_uri in
     let%map (r, _) = State.subscribe state in
     don't_wait_for (
       Pipe.iter' r ~f:(fun q ->
