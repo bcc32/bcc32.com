@@ -1,0 +1,22 @@
+opam-version: "2.0"
+maintainer: "webmaster@bcc32.com"
+authors: ["Aaron L. Zeng"]
+homepage: "https://github.com/bcc32/bcc32-com"
+bug-reports: "https://github.com/bcc32/bcc32-com/issues"
+dev-repo: "git+https://github.com/bcc32/bcc32-com.git"
+
+build: [
+  ["jbuilder" "subst"] {pinned}
+  ["jbuilder" "build" "-p" name "-j" jobs]
+  ["jbuilder" "runtest" "-p" name] {with-test}
+]
+
+depends: [
+  "jbuilder"        {build & >= "1.0+beta14"}
+  "async"           {>= "v0.11.0"}
+  "async_js"        {>= "v0.11.0"}
+  "core"            {>= "v0.11.0"}
+  "incr_dom"        {>= "v0.11.0"}
+  "websocket"       {>= "2.10"}
+  "websocket-async" {>= "2.10"}
+]
