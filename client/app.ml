@@ -41,7 +41,7 @@ module App
     Virtual_dom.Vdom.(
       Node.input
         [ Attr.on_input (fun _ input -> inject (Action.User_input input))
-        ; Attr.value model ]
+        ; Attr.string_property "value" model ]
         [])
   ;;
 
