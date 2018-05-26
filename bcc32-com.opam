@@ -13,6 +13,7 @@ build: [
 
 depends: [
   "jbuilder"        {build & >= "1.0+beta14"}
+  "ppx_jane"        {build & >= "v0.11.0"}
   "async"           {>= "v0.11.0"}
   "async_js"        {>= "v0.11.0"}
   "core"            {>= "v0.11.0"}
