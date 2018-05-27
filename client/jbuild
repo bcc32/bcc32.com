@@ -1,5 +1,5 @@
 (executable
- ((name       app)
+ ((name       main)
   (libraries (async_js
               base
               core_kernel
@@ -10,4 +10,4 @@
 
 (install
  ((section share)
-  (files ((app.bc.js as js/app.js)))))
+  (files ((main.bc.js as js/app.js)))))
