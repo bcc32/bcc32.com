@@ -18,13 +18,13 @@ let create ?(capacity = 20) () =
           ~on_callback_raise:ignore }
   in
   (* cleanup old messages periodically *)
-  every (sec 1.0) (fun () ->
+  every (sec 60.0) (fun () ->
     let rec loop () =
       match Queue.peek t.messages with
       | None -> ()
       | Some msg ->
         let diff = Time_ns.diff (Time_ns.now ()) msg.timestamp in
-        if Time_ns.Span.(diff > of_sec 5.0)
+        if Time_ns.Span.(diff > hour)
         then (
           ignore (Queue.dequeue_exn t.messages : Protocol.Message.t);
           loop ())
