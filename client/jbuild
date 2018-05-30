@@ -4,6 +4,7 @@
               base
               core_kernel
               incr_dom
+              incr_dom_widgets
 
               protocol))
   (preprocess (pps (ppx_jane js_of_ocaml-ppx)))))

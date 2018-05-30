@@ -1,17 +1,15 @@
 open! Core
 open! Async
 
-let set = Rpc.One_way.implement Protocol.set State.set
+let set =
+  Rpc.Rpc.implement Protocol.send (fun msgs req ->
+    Messages.add msgs req;
+    Deferred.unit)
+;;
 
 let subscribe =
-  Rpc.Pipe_rpc.implement_direct Protocol.subscribe (fun state () writer ->
-    let r = Bus.pipe1_exn (State.bus state) [%here] in
-    don't_wait_for (
-      Pipe.iter r ~f:(fun x ->
-        match Rpc.Pipe_rpc.Direct_stream_writer.write writer x with
-        | `Closed -> Pipe.close_read r; Deferred.unit
-        | `Flushed f -> f));
-    Deferred.(ok unit))
+  Rpc.State_rpc.implement Protocol.subscribe (fun msgs () ->
+    Deferred.Result.return (Messages.to_list msgs, Messages.pipe msgs))
 ;;
 
 let implementations =
@@ -20,15 +18,21 @@ let implementations =
     ~on_unknown_rpc:`Close_connection
 ;;
 
-let state = State.create ""
+let msgs = Messages.create ()
 
 let handle_tcp_connection addr reader writer =
   Log.Global.info !"connection from %{sexp: Socket.Address.Inet.t}" addr;
-  Rpc_ws_transport.handle_connection reader writer
-    ~implementations
-    ~connection_state:(fun _ -> state)
-    ~on_handshake_error:`Ignore
-  |> Deferred.Or_error.ok_exn
+  let addr = Socket.Address.Inet.addr addr in
+  (* only accept loopback connections *)
+  if List.mem Unix.Inet_addr.[ localhost; localhost_inet6 ] addr
+       ~equal:Unix.Inet_addr.equal
+  then (
+    Rpc_ws_transport.handle_connection reader writer
+      ~implementations
+      ~connection_state:(fun _ -> msgs)
+      ~on_handshake_error:`Ignore
+    |> Deferred.Or_error.ok_exn)
+  else (Deferred.unit)
 ;;
 
 let serve port =

@@ -1,18 +1,14 @@
 open! Core_kernel
 open! Async_kernel
-open Async_rpc_kernel
 
 type t
 
 val create
   :  uri:Uri.t
+  -> schedule:(Action.t -> unit)
   -> t Deferred.t
 
-val query_set
+val send
   :  t
-  -> string
+  -> Protocol.Message_request.t
   -> unit
-
-val subscribe
-  :  t
-  -> (string Pipe.Reader.t * Rpc.Pipe_rpc.Metadata.t) Deferred.t
