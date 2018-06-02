@@ -1,6 +1,6 @@
 # Frontend to dune.
 
-.PHONY: default build install uninstall test serve clean
+.PHONY: default build install uninstall test serve dist clean
 
 default: build
 
@@ -25,3 +25,11 @@ clean:
 # Optionally, remove all files/folders ignored by git as defined
 # in .gitignore (-X).
 	git clean -dfXq
+
+dist: build
+	filename=bcc32-com-$$(git describe --always --dirty).tar.xz           ;\
+	tempdir=$$(mktemp -d)                                                 ;\
+	mkdir $$tempdir/bcc32-com                                             ;\
+	jbuilder install --prefix=$$tempdir/bcc32-com                         ;\
+	tar -caf _build/$$filename --owner=0 --group=0 -C $$tempdir bcc32-com ;\
+	rm -rf $$tempdir
