@@ -1,0 +1,10 @@
+(executable
+ (name main)
+ (libraries async_js base core_kernel incr_dom incr_dom_widgets protocol)
+ (preprocess
+  (pps ppx_jane js_of_ocaml-ppx)))
+
+(install
+ (section share)
+ (files
+  (main.bc.js as js/app.js)))

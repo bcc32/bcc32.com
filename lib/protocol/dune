@@ -1,0 +1,6 @@
+(library
+ (name protocol)
+ (libraries async_kernel async_rpc_kernel core_kernel)
+ (synopsis "Defines RPC protocols between server and client.")
+ (preprocess
+  (pps ppx_jane)))

@@ -1,0 +1,6 @@
+(library
+ (name bcc32_com_test)
+ (libraries async core websocket-async rpc_ws_transport)
+ (preprocess
+  (pps ppx_jane))
+ (inline_tests))

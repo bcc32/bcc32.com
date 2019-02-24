@@ -1,9 +1,0 @@
-(executable
- ((name        main)
-  (public_name bcc32-com-server)
-  (libraries   (async
-                core
-
-                protocol
-                rpc_ws_transport))
-  (preprocess  (pps (ppx_jane)))))
