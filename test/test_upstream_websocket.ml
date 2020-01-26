@@ -50,7 +50,6 @@ let with_connection ~f =
   let ws_to_app, app_to_ws =
     Websocket_async.client_ez
       (Uri.of_string "http://localhost")
-      (Socket.create Socket.Type.unix)
       client_reader
       client_writer
   in

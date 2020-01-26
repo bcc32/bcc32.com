@@ -30,8 +30,6 @@ let apply_action (action : Action.t) model state =
     Model.clear_input_content model
 ;;
 
-let update_visibility = Fn.id
-
 let view_text_input ?(extra_attrs = []) ~inject name value on_input =
   let open Virtual_dom.Vdom in
   Node.label
@@ -39,7 +37,7 @@ let view_text_input ?(extra_attrs = []) ~inject name value on_input =
     [ Node.text name
     ; Node.input
         (Attr.on_keypress (fun kbe ->
-           match Incr_dom_widgets.Keyboard_event.key kbe with
+           match Incr_dom_keyboard.Keyboard_event.key kbe with
            | Enter -> inject Action.Send_msg
            | _ -> Event.Ignore)
          :: Attr.on_input on_input
@@ -102,6 +100,13 @@ let view model ~inject =
     ]
 ;;
 
-let on_startup ~schedule _model = State.create ~uri:ws_uri ~schedule
-let on_display ~old:_ _model _state = ()
+let on_startup ~schedule_action _model = State.create ~uri:ws_uri ~schedule_action
 let initial_model = Model.empty
+
+let create model ~old_model:_ ~inject =
+  let open Incr_dom.Incr.Let_syntax in
+  let%map view = view model ~inject
+  and model = model in
+  let apply_action action state ~schedule_action:_ = apply_action action model state in
+  Incr_dom.Component.create ~apply_action model view
+;;

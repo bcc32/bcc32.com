@@ -2,7 +2,7 @@ open! Core_kernel
 open! Async_kernel
 
 let () =
-  Incr_dom.Start_app.simple
+  Incr_dom.Start_app.start
     (module App)
     ~debug:true
     ~initial_model:App.initial_model

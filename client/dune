@@ -1,6 +1,8 @@
 (executable
  (name main)
- (libraries async_js base core_kernel incr_dom incr_dom_widgets protocol)
+ (modes js)
+ (libraries async_js base core_kernel incr_dom incr_dom_keyboard
+            protocol)
  (preprocess
   (pps ppx_jane js_of_ocaml-ppx)))
 

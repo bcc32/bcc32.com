@@ -15,14 +15,7 @@ let client
       reader
       writer
   =
-  let r, w =
-    Websocket_async.client_ez
-      uri
-      (Socket.create Socket.Type.unix)
-      (* TODO remove when vbmithr/ocaml-websocket#101 fix gets released *)
-      reader
-      writer
-  in
+  let r, w = Websocket_async.client_ez uri reader writer in
   let transport = Async_rpc_kernel.Pipe_transport.(create Kind.string r w) in
   Async_rpc_kernel.Rpc.Connection.create
     transport
@@ -63,9 +56,7 @@ let handle_connection
   let rpc_to_app =
     Pipe.create_writer
       (Pipe.iter ~f:(fun content ->
-         Pipe.write
-           app_to_ws_w
-           (Frame.create () ~opcode:Binary ~content:(String.copy content))))
+         Pipe.write app_to_ws_w (Frame.create () ~opcode:Binary ~content)))
   in
   let ws_server =
     Websocket_async.server () ~reader ~writer ~app_to_ws:app_to_ws_r ~ws_to_app
