@@ -1,5 +1,6 @@
 open! Core_kernel
 open! Async_kernel
+open Js_of_ocaml
 
 module Action = Action
 module Model  = Model
