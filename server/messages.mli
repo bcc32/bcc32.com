@@ -4,10 +4,7 @@ open! Async
 type t [@@deriving sexp_of]
 
 (** default [capacity] is 20. *)
-val create
-  :  ?capacity:int
-  -> unit
-  -> t
+val create : ?capacity:int -> unit -> t
 
 (** [add t msg] adds a message to the queue, removing the first one if the new
     size would exceed the capacity. *)
@@ -17,6 +14,6 @@ val add : t -> Protocol.Message_request.t -> unit
 val to_list : t -> Protocol.Message.t list
 
 (** [pipe t] returns a pipe of future messages added. *)
-val pipe    : t -> Protocol.Message.t Pipe.Reader.t
+val pipe : t -> Protocol.Message.t Pipe.Reader.t
 
 include Invariant.S with type t := t

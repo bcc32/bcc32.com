@@ -24,15 +24,19 @@ let handle_tcp_connection addr reader writer =
   Log.Global.info !"connection from %{sexp: Socket.Address.Inet.t}" addr;
   let addr = Socket.Address.Inet.addr addr in
   (* only accept loopback connections *)
-  if List.mem Unix.Inet_addr.[ localhost; localhost_inet6 ] addr
+  if List.mem
+       Unix.Inet_addr.[ localhost; localhost_inet6 ]
+       addr
        ~equal:Unix.Inet_addr.equal
-  then (
-    Rpc_ws_transport.handle_connection reader writer
+  then
+    Rpc_ws_transport.handle_connection
+      reader
+      writer
       ~implementations
       ~connection_state:(fun _ -> msgs)
       ~on_handshake_error:`Ignore
-    |> Deferred.Or_error.ok_exn)
-  else (Deferred.unit)
+    |> Deferred.Or_error.ok_exn
+  else Deferred.unit
 ;;
 
 let serve port =
@@ -47,14 +51,13 @@ let serve port =
 ;;
 
 let main =
-  Command.async ~summary:"run a server" begin
-    let open Command.Let_syntax in
-    let%map_open port =
-      flag "port" (optional_with_default 8080 int)
-        ~doc:"PORT port to listen on"
-    in
-    fun () -> serve port
-  end
+  Command.async
+    ~summary:"run a server"
+    (let open Command.Let_syntax in
+     let%map_open port =
+       flag "port" (optional_with_default 8080 int) ~doc:"PORT port to listen on"
+     in
+     fun () -> serve port)
 ;;
 
 let () = Command.run main

@@ -1,8 +1,7 @@
 open! Core_kernel
 open! Async_kernel
 open Async_rpc_kernel
-
-module Message         = Message
+module Message = Message
 module Message_request = Message_request
 
 let send =
@@ -14,7 +13,8 @@ let send =
 ;;
 
 let subscribe =
-  Rpc.State_rpc.create ()
+  Rpc.State_rpc.create
+    ()
     ~name:"message-subscribe"
     ~version:0
     ~bin_query:Unit.bin_t

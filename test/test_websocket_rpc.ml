@@ -10,16 +10,14 @@ let echo_protocol =
 ;;
 
 let server () =
+  let implementations = [ Rpc.Rpc.implement' echo_protocol (Fn.const Fn.id) ] in
   let implementations =
-    [ Rpc.Rpc.implement' echo_protocol (Fn.const Fn.id) ]
-  in
-  let implementations =
-    Rpc.Implementations.create_exn
-      ~implementations
-      ~on_unknown_rpc:`Raise
+    Rpc.Implementations.create_exn ~implementations ~on_unknown_rpc:`Raise
   in
   let handle_connection _addr reader writer =
-    Rpc_ws_transport.handle_connection reader writer
+    Rpc_ws_transport.handle_connection
+      reader
+      writer
       ~implementations
       ~description:(Info.of_string "ws rpc test server")
       ~connection_state:(Fn.const ())
@@ -35,20 +33,14 @@ let server () =
 let ws_client () =
   let%bind server = server () in
   let server_addr = Tcp.Server.listening_on_address server in
-  let%bind (_sock, reader, writer) =
+  let%bind _sock, reader, writer =
     Tcp.connect (Tcp.Where_to_connect.of_inet_address server_addr)
   in
   let uri =
-    let `Inet (host, port) = server_addr in
-    Uri.make ()
-      ~host:(Unix.Inet_addr.to_string host)
-      ~port
+    let (`Inet (host, port)) = server_addr in
+    Uri.make () ~host:(Unix.Inet_addr.to_string host) ~port
   in
-  Rpc_ws_transport.client
-    ~connection_state:(Fn.const ())
-    uri
-    reader
-    writer
+  Rpc_ws_transport.client ~connection_state:(Fn.const ()) uri reader writer
 ;;
 
 module Frame = Websocket_async.Frame

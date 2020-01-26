@@ -7,22 +7,26 @@ module Frame = Websocket_async.Frame
 
 let with_connection ~f =
   let websocket_serve reader writer =
-    let (ws_to_app_r, ws_to_app_w) = Pipe.create () in
-    let (app_to_ws_r, app_to_ws_w) = Pipe.create () in
+    let ws_to_app_r, ws_to_app_w = Pipe.create () in
+    let app_to_ws_r, app_to_ws_w = Pipe.create () in
     let%map () =
-      Pipe.transfer' ws_to_app_r app_to_ws_w
-        ~f:(fun q ->
-          q
-          |> Queue.filter_map ~f:(fun ({ Frame.opcode; extension = _; final = _; content } as frame) ->
-            match opcode with
-            | Continuation | Text | Binary -> Some { frame with content = String.rev content }
-            | Close -> Pipe.close app_to_ws_w; Some (Frame.close 1000)
-            | Ping -> Some (Frame.create () ~opcode:Pong ~content)
-            | Pong -> None
-            | Ctrl _ | Nonctrl _ -> Some (Frame.close 1002))
-          |> return)
+      Pipe.transfer' ws_to_app_r app_to_ws_w ~f:(fun q ->
+        q
+        |> Queue.filter_map
+             ~f:(fun ({ Frame.opcode; extension = _; final = _; content } as frame) ->
+               match opcode with
+               | Continuation | Text | Binary ->
+                 Some { frame with content = String.rev content }
+               | Close ->
+                 Pipe.close app_to_ws_w;
+                 Some (Frame.close 1000)
+               | Ping -> Some (Frame.create () ~opcode:Pong ~content)
+               | Pong -> None
+               | Ctrl _ | Nonctrl _ -> Some (Frame.close 1002))
+        |> return)
     and () =
-      Websocket_async.server ()
+      Websocket_async.server
+        ()
         ~reader
         ~writer
         ~app_to_ws:app_to_ws_r
@@ -37,14 +41,15 @@ let with_connection ~f =
       Tcp.Where_to_listen.of_port_chosen_by_os
       (fun _ r w -> websocket_serve r w)
   in
-  let%bind (_, client_reader, client_writer) =
+  let%bind _, client_reader, client_writer =
     tcp_server
     |> Tcp.Server.listening_on_address
     |> Tcp.Where_to_connect.of_inet_address
     |> Tcp.connect
   in
-  let (ws_to_app, app_to_ws) =
-    Websocket_async.client_ez (Uri.of_string "http://localhost")
+  let ws_to_app, app_to_ws =
+    Websocket_async.client_ez
+      (Uri.of_string "http://localhost")
       (Socket.create Socket.Type.unix)
       client_reader
       client_writer
